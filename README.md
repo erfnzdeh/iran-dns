@@ -288,7 +288,7 @@ Removes scripts, systemd units, cron jobs, and state files. Does **not** remove 
 
 ## Test Domains
 
-34 domains covering international/sanctioned services (Google, YouTube, GitHub, Docker, X) and Iranian services (Digikala, Aparat, Shaparak, Bale, Eitaa, Quera) to measure both reach and censorship.
+32 domains covering international/sanctioned services (Google, YouTube, GitHub, Docker, X) and Iranian services (Digikala, Aparat, Shaparak, Bale, Eitaa, Quera) to measure both reach and censorship.
 
 ## License
 

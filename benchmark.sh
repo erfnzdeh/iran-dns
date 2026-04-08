@@ -73,7 +73,7 @@ DOMAINS=(
     "developer.apple.com" "android.com" "epicgames.com" "oracle.com" "x.com"
     # Iranian
     "tgju.org" "aparat.com" "digikala.com" "varzesh3.com" "torob.com"
-    "sharif.ir" "sharif.edu" "shaparak.ir" "sep.shaparak.ir"
+    "shaparak.ir" "sep.shaparak.ir"
     "digiato.com" "isna.ir" "irna.ir" "zoomit.ir" "zarebin.ir"
     "gateway.zibal.ir" "zibal.ir" "web.bale.ai"
     "eitaa.com" "web.eitaa.com" "quera.ir" "quera.org" "ramzinex.com" "cdn.ir"
