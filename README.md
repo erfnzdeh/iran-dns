@@ -18,7 +18,7 @@ If you're running Matrix Synapse, Gitea, Nextcloud, or any self-hosted service t
 ## Quick Start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/iran-dns.git
+git clone https://github.com/erfnzdeh/iran-dns.git
 cd iran-dns
 sudo bash install.sh
 ```
