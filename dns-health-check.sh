@@ -1,13 +1,13 @@
 #!/bin/bash
-# iran-dns: DNS Health Check
+# smart-dns-ir: DNS Health Check
 # Runs every 5 minutes via systemd timer. Tests resolution from host and
 # from inside Docker containers. Auto-restarts dnsmasq or containers as needed.
-# Installed to /usr/local/bin/iran-dns-health-check by install.sh.
+# Installed to /usr/local/bin/smart-dns-ir-health-check by install.sh.
 
 set -o pipefail
 
-LOG=/var/log/iran-dns-health.log
-STATE_DIR=/var/lib/iran-dns
+LOG=/var/log/smart-dns-ir-health.log
+STATE_DIR=/var/lib/smart-dns-ir
 mkdir -p "$STATE_DIR"
 
 DOMAINS=("google.com" "matrix.org" "github.com")

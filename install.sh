@@ -1,5 +1,5 @@
 #!/bin/bash
-# iran-dns: Full Installer
+# smart-dns-ir: Full Installer
 # Sets up dnsmasq as a local caching DNS resolver, optimized for Iranian networks.
 # Handles systemd-resolved conflicts, IPv6, Docker integration, health checks.
 # Usage: sudo bash install.sh
@@ -107,16 +107,16 @@ if crontab -l 2>/dev/null | grep -q "dns_auto_update"; then
 fi
 $LEGACY_CLEANED && ok "cleaned up legacy scripts from setup_ubuntu_dns.sh"
 
-install -m 0755 "$SCRIPT_DIR/dns-updater.sh"      /usr/local/bin/iran-dns-update
-install -m 0755 "$SCRIPT_DIR/dns-health-check.sh"  /usr/local/bin/iran-dns-health-check
-install -m 0755 "$SCRIPT_DIR/benchmark.sh"         /usr/local/bin/iran-dns-benchmark
+install -m 0755 "$SCRIPT_DIR/dns-updater.sh"      /usr/local/bin/smart-dns-ir-update
+install -m 0755 "$SCRIPT_DIR/dns-health-check.sh"  /usr/local/bin/smart-dns-ir-health-check
+install -m 0755 "$SCRIPT_DIR/benchmark.sh"         /usr/local/bin/smart-dns-ir-benchmark
 ok "scripts installed to /usr/local/bin/"
 
 # ─────────────────────────────────────────────────────────────
 step 5 "Running initial benchmark + configuring dnsmasq"
 # ─────────────────────────────────────────────────────────────
 echo "  Benchmarking 60+ DNS servers in parallel (10-15 seconds)..."
-/usr/local/bin/iran-dns-update
+/usr/local/bin/smart-dns-ir-update
 
 systemctl enable dnsmasq
 ok "dnsmasq enabled and configured"
@@ -168,7 +168,7 @@ with open('$DAEMON_JSON', 'w') as f:
 
         warn "Restart Docker to apply: systemctl restart docker"
     else
-        ok "Docker found but no bridge networks detected yet (will be configured on next iran-dns-update run)"
+        ok "Docker found but no bridge networks detected yet (will be configured on next smart-dns-ir-update run)"
     fi
 else
     ok "Docker not installed, skipping"
@@ -187,19 +187,19 @@ RestartSec=5
 EOF
 
 # Health check systemd timer (every 5 min)
-cat <<'EOF' > /etc/systemd/system/iran-dns-health-check.service
+cat <<'EOF' > /etc/systemd/system/smart-dns-ir-health-check.service
 [Unit]
-Description=iran-dns health check
+Description=smart-dns-ir health check
 After=network.target dnsmasq.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/iran-dns-health-check
+ExecStart=/usr/local/bin/smart-dns-ir-health-check
 EOF
 
-cat <<'EOF' > /etc/systemd/system/iran-dns-health-check.timer
+cat <<'EOF' > /etc/systemd/system/smart-dns-ir-health-check.timer
 [Unit]
-Description=Run iran-dns health check every 5 minutes
+Description=Run smart-dns-ir health check every 5 minutes
 
 [Timer]
 OnBootSec=60
@@ -211,11 +211,11 @@ WantedBy=timers.target
 EOF
 
 systemctl daemon-reload
-systemctl enable --now iran-dns-health-check.timer
+systemctl enable --now smart-dns-ir-health-check.timer
 
 # Daily cron for DNS re-benchmark
-(crontab -l 2>/dev/null | grep -v "iran-dns-update"; \
- echo "0 3 * * * /usr/local/bin/iran-dns-update > /var/log/iran-dns-update.log 2>&1") | crontab -
+(crontab -l 2>/dev/null | grep -v "smart-dns-ir-update"; \
+ echo "0 3 * * * /usr/local/bin/smart-dns-ir-update > /var/log/smart-dns-ir-update.log 2>&1") | crontab -
 
 ok "health check timer (5 min), daily re-benchmark (03:00), dnsmasq auto-restart"
 
@@ -225,15 +225,15 @@ echo -e "${GREEN}Installation complete!${NC}"
 echo ""
 echo "  What's running now:"
 echo "    dnsmasq          — local caching DNS on 127.0.0.1 (+ Docker bridges)"
-echo "    iran-dns-update  — daily re-benchmark of upstream servers (03:00)"
-echo "    iran-dns-health-check — health monitor every 5 min"
+echo "    smart-dns-ir-update  — daily re-benchmark of upstream servers (03:00)"
+echo "    smart-dns-ir-health-check — health monitor every 5 min"
 echo ""
 echo "  Useful commands:"
-echo "    iran-dns-benchmark         — run a standalone DNS benchmark"
-echo "    iran-dns-update            — re-benchmark and update dnsmasq now"
-echo "    iran-dns-health-check      — run health check manually"
+echo "    smart-dns-ir-benchmark         — run a standalone DNS benchmark"
+echo "    smart-dns-ir-update            — re-benchmark and update dnsmasq now"
+echo "    smart-dns-ir-health-check      — run health check manually"
 echo "    journalctl -u dnsmasq      — dnsmasq logs"
-echo "    cat /var/log/iran-dns-health.log  — health check log"
+echo "    cat /var/log/smart-dns-ir-health.log  — health check log"
 echo ""
 echo "  To add anti-censorship overrides for specific domains, edit:"
 echo "    /etc/dnsmasq.conf  (inside the MANUAL-BEGIN block)"

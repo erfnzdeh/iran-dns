@@ -1,4 +1,4 @@
-# iran-dns
+# smart-dns-ir
 
 A self-healing DNS optimizer for servers in Iran.
 
@@ -18,8 +18,8 @@ If you're running Matrix Synapse, Gitea, Nextcloud, or any self-hosted service t
 ## Quick Start
 
 ```bash
-git clone https://github.com/erfnzdeh/iran-dns.git
-cd iran-dns
+git clone https://github.com/erfnzdeh/smart-dns-ir.git
+cd smart-dns-ir
 sudo bash install.sh
 ```
 
@@ -37,11 +37,11 @@ That's it. The installer:
 
 | Component | Location | Purpose |
 |---|---|---|
-| `iran-dns-benchmark` | `/usr/local/bin/` | Standalone benchmark — test DNS servers anytime |
-| `iran-dns-update` | `/usr/local/bin/` | Re-benchmark + update dnsmasq config |
-| `iran-dns-health-check` | `/usr/local/bin/` | Test host + container DNS, auto-restart if broken |
-| Health check timer | systemd | Runs `iran-dns-health-check` every 5 min |
-| Daily cron | crontab | Runs `iran-dns-update` at 03:00 |
+| `smart-dns-ir-benchmark` | `/usr/local/bin/` | Standalone benchmark — test DNS servers anytime |
+| `smart-dns-ir-update` | `/usr/local/bin/` | Re-benchmark + update dnsmasq config |
+| `smart-dns-ir-health-check` | `/usr/local/bin/` | Test host + container DNS, auto-restart if broken |
+| Health check timer | systemd | Runs `smart-dns-ir-health-check` every 5 min |
+| Daily cron | crontab | Runs `smart-dns-ir-update` at 03:00 |
 | dnsmasq restart policy | systemd drop-in | Auto-restarts dnsmasq on crash |
 
 ## Just Want to Benchmark?
@@ -84,7 +84,7 @@ If even `apt` doesn't work (no outbound DNS at all), see [Offline Installation](
 The installer auto-detects Docker bridge networks and configures everything. If you set up Docker *after* running `install.sh`, just run the updater:
 
 ```bash
-sudo iran-dns-update
+sudo smart-dns-ir-update
 ```
 
 It auto-detects new bridge IPs and adds them to dnsmasq's listen addresses.
@@ -187,7 +187,7 @@ dig @127.0.0.1 google.com A +short
 ss -lnp sport = 53
 
 # Re-run the benchmark to get fresh upstreams
-sudo iran-dns-update
+sudo smart-dns-ir-update
 ```
 
 ### Container DNS is broken but host works
@@ -227,7 +227,7 @@ sudo systemctl restart dnsmasq
 docker network inspect $(docker network ls -q) 2>/dev/null | grep Gateway
 
 # Re-run updater to auto-detect new IPs
-sudo iran-dns-update
+sudo smart-dns-ir-update
 ```
 
 ## Offline Installation
@@ -250,8 +250,8 @@ Copy to the VPS:
 
 ```bash
 scp /tmp/debs/*.deb root@YOUR_VPS:/root/
-scp -r iran-dns/ root@YOUR_VPS:/root/iran-dns/
-ssh root@YOUR_VPS 'cd /root && dpkg -i *.deb; apt-get install -f -y; cd iran-dns && bash install.sh'
+scp -r smart-dns-ir/ root@YOUR_VPS:/root/smart-dns-ir/
+ssh root@YOUR_VPS 'cd /root && dpkg -i *.deb; apt-get install -f -y; cd smart-dns-ir && bash install.sh'
 ```
 
 ## Uninstall

@@ -1,5 +1,5 @@
 #!/bin/bash
-# iran-dns: DNS Benchmark
+# smart-dns-ir: DNS Benchmark
 # Tests 60+ Iranian and global DNS servers in parallel.
 # Measures domain support and latency, filters out censored 10.10.x.x responses.
 # Works on any Linux/macOS with `dig` installed.
@@ -81,7 +81,7 @@ DOMAINS=(
 )
 
 echo "================================================================================"
-echo "  iran-dns benchmark"
+echo "  smart-dns-ir benchmark"
 echo "  Testing ${#DOMAINS[@]} domains against ${#DNS_SERVERS[@]} DNS servers..."
 echo "  Hijack detection: responses containing 10.10.x.x are marked as censored."
 echo "  Please wait ~10 seconds..."
