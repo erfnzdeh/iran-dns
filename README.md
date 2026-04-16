@@ -40,6 +40,7 @@ That's it. The installer:
 | `smart-dns-ir-benchmark` | `/usr/local/bin/` | Standalone benchmark — test DNS servers anytime |
 | `smart-dns-ir-update` | `/usr/local/bin/` | Re-benchmark + update dnsmasq config |
 | `smart-dns-ir-health-check` | `/usr/local/bin/` | Test host + container DNS, auto-restart if broken |
+| `smart-dns-ir-doctor` | `/usr/local/bin/` | Detect + fix containers that bypass dnsmasq |
 | Health check timer | systemd | Runs `smart-dns-ir-health-check` every 5 min |
 | Daily cron | crontab | Runs `smart-dns-ir-update` at 03:00 |
 | dnsmasq restart policy | systemd drop-in | Auto-restarts dnsmasq on crash |
@@ -140,6 +141,20 @@ sudo ufw allow from 172.18.0.0/16 to any port 53 proto tcp
 sudo systemctl restart dnsmasq docker
 docker-compose down && docker-compose up -d
 ```
+
+### Docker DNS Doctor
+
+If you inherited a `docker-compose.yml` with hardcoded `dns:` entries pointing at external servers (e.g. `78.157.42.100`, `217.218.127.127`), the doctor can detect and fix them automatically:
+
+```bash
+# Audit — show which containers bypass dnsmasq
+sudo smart-dns-ir-doctor
+
+# Fix — rewrite compose files and recreate affected containers
+sudo smart-dns-ir-doctor --fix
+```
+
+The installer runs the audit automatically. The health check also logs warnings when it detects containers with DNS bypass.
 
 ## Anti-Censorship Overrides
 

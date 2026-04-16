@@ -94,6 +94,29 @@ if command -v docker &>/dev/null && docker ps --format '{{.Names}}' 2>/dev/null 
             log "ACTION: restarting container $FIRST_CONTAINER to clear DNS cache"
             docker restart "$FIRST_CONTAINER" >/dev/null 2>&1
         fi
+    elif echo "$container_result" | grep -qE '^10\.10\.'; then
+        CONTAINER_OK=false
+        log "FAIL container ($FIRST_CONTAINER): got censored IP $container_result for google.com"
+    fi
+
+    # Check for containers whose dns: directives bypass dnsmasq entirely.
+    # These containers talk directly to external DNS, missing anti-censorship
+    # overrides even when dnsmasq itself is healthy.
+    BRIDGE_IPS_RE=$(ip -4 addr show 2>/dev/null \
+        | grep -oP 'inet \K[\d.]+(?=/.*(docker|br-))' \
+        | paste -sd'|' || true)
+    if [[ -n "$BRIDGE_IPS_RE" ]]; then
+        while read -r cid cname; do
+            dns_raw=$(docker inspect "$cid" \
+                --format '{{range .HostConfig.Dns}}{{.}} {{end}}' 2>/dev/null)
+            [[ -z "$dns_raw" ]] && continue
+            for d in $dns_raw; do
+                if [[ "$d" != "127.0.0.1" ]] && ! echo "$d" | grep -qE "^($BRIDGE_IPS_RE)$"; then
+                    log "BYPASS container $cname has dns=$dns_raw (not using dnsmasq). Run: smart-dns-ir-doctor --fix"
+                    break 2
+                fi
+            done
+        done < <(docker ps --format '{{.ID}} {{.Names}}' 2>/dev/null)
     fi
 fi
 

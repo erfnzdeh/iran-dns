@@ -28,6 +28,7 @@ systemctl daemon-reload
 rm -f /usr/local/bin/smart-dns-ir-update
 rm -f /usr/local/bin/smart-dns-ir-health-check
 rm -f /usr/local/bin/smart-dns-ir-benchmark
+rm -f /usr/local/bin/smart-dns-ir-doctor
 
 # Remove cron job
 (crontab -l 2>/dev/null | grep -v "smart-dns-ir-update") | crontab - 2>/dev/null || true

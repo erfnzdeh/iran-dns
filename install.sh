@@ -135,6 +135,7 @@ $LEGACY_CLEANED && ok "cleaned up legacy scripts from setup_ubuntu_dns.sh"
 install -m 0755 "$SCRIPT_DIR/dns-updater.sh"      /usr/local/bin/smart-dns-ir-update
 install -m 0755 "$SCRIPT_DIR/dns-health-check.sh"  /usr/local/bin/smart-dns-ir-health-check
 install -m 0755 "$SCRIPT_DIR/benchmark.sh"         /usr/local/bin/smart-dns-ir-benchmark
+install -m 0755 "$SCRIPT_DIR/dns-doctor.sh"        /usr/local/bin/smart-dns-ir-doctor
 ok "scripts installed to /usr/local/bin/"
 
 # ─────────────────────────────────────────────────────────────
@@ -195,6 +196,15 @@ with open('$DAEMON_JSON', 'w') as f:
         warn "Restart Docker to apply: systemctl restart docker"
     else
         ok "Docker found but no bridge networks detected yet (will be configured on next smart-dns-ir-update run)"
+    fi
+
+    # Check for containers with dns: directives that bypass dnsmasq
+    if docker ps --format '{{.ID}}' 2>/dev/null | grep -q .; then
+        echo ""
+        echo "  Checking containers for DNS bypass..."
+        if ! /usr/local/bin/smart-dns-ir-doctor 2>/dev/null; then
+            warn "Some containers bypass dnsmasq. Run: smart-dns-ir-doctor --fix"
+        fi
     fi
 else
     ok "Docker not installed, skipping"
@@ -258,6 +268,8 @@ echo "  Useful commands:"
 echo "    smart-dns-ir-benchmark         — run a standalone DNS benchmark"
 echo "    smart-dns-ir-update            — re-benchmark and update dnsmasq now"
 echo "    smart-dns-ir-health-check      — run health check manually"
+echo "    smart-dns-ir-doctor            — check containers for DNS bypass"
+echo "    smart-dns-ir-doctor --fix      — fix containers + recreate them"
 echo "    journalctl -u dnsmasq      — dnsmasq logs"
 echo "    cat /var/log/smart-dns-ir-health.log  — health check log"
 echo ""
